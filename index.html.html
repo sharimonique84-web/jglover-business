@@ -1,0 +1,1850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>J. Glover – Business Manager</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap');
+:root{
+  --forest:#1E3A1E;--moss:#2D5A27;--leaf:#4A8C3F;--sage:#7FB069;
+  --cream:#F5F0E8;--sand:#EDE4CE;--border:#D4CDB8;
+  --bark:#8B6914;--gold:#C9A84C;--gold-light:#F0DFA0;
+  --rust:#C0392B;--rust-light:#FDECEA;
+  --sky:#1A6FA8;--sky-light:#EAF3FB;
+  --white:#FFFFFF;--ink:#1A1A1A;--muted:#6B7066;
+  --shadow:0 4px 20px rgba(30,58,30,.12);--r:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Source Sans 3',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;padding-bottom:72px}
+h1,h2,h3{font-family:'Playfair Display',serif}
+.topbar{background:var(--forest);padding:12px 16px;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:space-between}
+.brand{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.1rem;line-height:1.2}
+.brand small{display:block;font-family:'Source Sans 3',sans-serif;font-size:.62rem;color:var(--sage);letter-spacing:1.5px;text-transform:uppercase;font-weight:300}
+.top-year{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:var(--gold-light);font-size:.8rem;font-weight:600;padding:5px 10px;border-radius:20px;cursor:pointer}
+.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--forest);display:flex;z-index:200;box-shadow:0 -2px 12px rgba(0,0,0,.25)}
+.bnav-btn{flex:1;background:none;border:none;color:var(--sage);padding:8px 2px 6px;font-size:.52rem;font-family:'Source Sans 3',sans-serif;font-weight:700;letter-spacing:.4px;text-transform:uppercase;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:color .2s}
+.bnav-btn svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8}
+.bnav-btn.active{color:var(--gold)}
+.bnav-btn.active svg{stroke:var(--gold)}
+.page{display:none;padding:14px;max-width:700px;margin:0 auto}
+.page.active{display:block}
+.card{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden}
+.card-head{background:var(--forest);color:var(--white);padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
+.card-head h2{font-size:.95rem;color:var(--gold);font-family:'Playfair Display',serif}
+.card-body{padding:14px}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.stat-box{background:var(--white);border-radius:var(--r);padding:12px;box-shadow:var(--shadow);border-left:4px solid var(--leaf)}
+.stat-box.gold{border-left-color:var(--gold)}.stat-box.rust{border-left-color:var(--rust)}.stat-box.sky{border-left-color:var(--sky)}
+.stat-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:3px}
+.stat-value{font-size:1.3rem;font-weight:700;color:var(--forest);line-height:1}
+.stat-sub{font-size:.68rem;color:var(--muted);margin-top:2px}
+label{display:block;font-size:.75rem;font-weight:700;color:var(--moss);margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px}
+input,select,textarea{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-size:.88rem;font-family:'Source Sans 3',sans-serif;background:var(--white);color:var(--ink);transition:border-color .2s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--leaf)}
+input[readonly]{background:var(--sand)}
+textarea{resize:vertical;min-height:65px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.form-col{margin-bottom:10px}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border-radius:8px;font-size:.82rem;font-weight:700;font-family:'Source Sans 3',sans-serif;cursor:pointer;border:none;transition:all .2s;text-transform:uppercase;letter-spacing:.5px}
+.btn-primary{background:var(--forest);color:var(--white)}.btn-primary:hover{background:var(--moss)}
+.btn-gold{background:var(--gold);color:var(--forest)}.btn-gold:hover{background:var(--bark);color:var(--white)}
+.btn-sky{background:var(--sky);color:var(--white)}.btn-sky:hover{background:#155d8f}
+.btn-rust{background:var(--rust);color:var(--white)}.btn-rust:hover{background:#a93226}
+.btn-outline{background:transparent;color:var(--forest);border:1.5px solid var(--forest)}.btn-outline:hover{background:var(--forest);color:var(--white)}
+.btn-sage{background:var(--leaf);color:var(--white)}.btn-sage:hover{background:var(--moss)}
+.btn-sm{padding:5px 10px;font-size:.72rem}
+.btn-block{width:100%;justify-content:center;margin-top:8px}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.badge-green{background:#E8F5E9;color:#2E7D32}.badge-gold{background:#FFF8E1;color:#F57F17}
+.badge-sky{background:var(--sky-light);color:var(--sky)}.badge-rust{background:var(--rust-light);color:var(--rust)}
+.badge-muted{background:var(--sand);color:var(--muted)}.badge-purple{background:#F3E5F5;color:#6A1B9A}
+.tbl{width:100%;border-collapse:collapse;font-size:.82rem}
+.tbl th{background:var(--sand);color:var(--moss);font-weight:700;text-align:left;padding:7px 9px;font-size:.68rem;text-transform:uppercase;letter-spacing:.5px}
+.tbl td{padding:8px 9px;border-bottom:1px solid var(--border);vertical-align:top}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--cream)}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.li-row{display:grid;grid-template-columns:1fr 95px 32px;gap:6px;align-items:center;margin-bottom:6px}
+.li-total-row{display:flex;justify-content:flex-end;margin-top:6px;padding-top:6px;border-top:2px solid var(--border)}
+.li-total{font-size:1rem;font-weight:700;color:var(--forest)}
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.sec-head h3{font-size:.95rem;color:var(--forest)}
+.divider{height:1px;background:var(--border);margin:12px 0}
+.alert{border-radius:8px;padding:9px 12px;font-size:.8rem;margin-bottom:10px}
+.alert-gold{background:var(--gold-light);border-left:4px solid var(--gold);color:#5a4000}
+.alert-rust{background:var(--rust-light);border-left:4px solid var(--rust);color:var(--rust)}
+.alert-green{background:#E8F5E9;border-left:4px solid var(--leaf);color:#1B5E20}
+.alert-sky{background:var(--sky-light);border-left:4px solid var(--sky);color:var(--sky)}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;align-items:flex-end;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--white);border-radius:16px 16px 0 0;padding:18px 14px 24px;width:100%;max-width:700px;max-height:93vh;overflow-y:auto}
+.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.modal-head h2{font-size:1.05rem;color:var(--forest)}
+.modal-close{background:var(--sand);border:none;border-radius:50%;width:30px;height:30px;font-size:1.1rem;cursor:pointer;color:var(--muted)}
+.tax-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:.83rem}
+.tax-row:last-child{border-bottom:none}
+.tax-row.total{font-weight:700;font-size:.92rem;color:var(--forest);padding-top:7px;margin-top:3px;border-top:2px solid var(--border)}
+.quarter-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.quarter-box{background:var(--sand);border-radius:8px;padding:9px;text-align:center}
+.q-label{font-size:.67rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:.5px}
+.q-date{font-size:.72rem;color:var(--bark);font-weight:600;margin:2px 0}
+.q-amt{font-size:1.05rem;font-weight:700;color:var(--forest)}
+.empty{text-align:center;padding:28px 14px;color:var(--muted)}
+.empty p{font-size:.83rem}
+
+/* CALENDAR */
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cal-header h3{font-size:1rem;color:var(--forest)}
+.cal-nav{background:var(--sand);border:none;border-radius:6px;padding:5px 10px;cursor:pointer;font-size:.85rem;font-weight:700;color:var(--forest)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-day-name{text-align:center;font-size:.62rem;font-weight:700;text-transform:uppercase;color:var(--muted);padding:4px 0}
+.cal-cell{min-height:44px;border-radius:6px;padding:3px;background:var(--white);border:1px solid var(--border);cursor:pointer;position:relative}
+.cal-cell:hover{background:var(--cream)}
+.cal-cell.today{border-color:var(--leaf);border-width:2px}
+.cal-cell.other-month{background:var(--sand);opacity:.5}
+.cal-cell .day-num{font-size:.72rem;font-weight:700;color:var(--muted)}
+.cal-cell.today .day-num{color:var(--leaf)}
+.cal-job-dot{display:block;border-radius:3px;padding:1px 3px;font-size:.55rem;font-weight:700;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:white}
+.dot-active{background:var(--sky)}.dot-quoted{background:var(--muted)}.dot-signed{background:var(--gold)}.dot-complete{background:var(--leaf)}.dot-paid{background:var(--bark)}
+.cal-legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.cal-legend-item{display:flex;align-items:center;gap:4px;font-size:.7rem;color:var(--muted)}
+.cal-legend-dot{width:10px;height:10px;border-radius:2px}
+
+/* AI SCAN */
+.scan-drop{border:2px dashed var(--border);border-radius:var(--r);padding:24px;text-align:center;cursor:pointer;transition:border-color .2s;background:var(--cream)}
+.scan-drop:hover,.scan-drop.drag-over{border-color:var(--leaf);background:var(--sand)}
+.scan-drop input{display:none}
+.scan-preview{max-width:100%;border-radius:8px;margin:10px 0;border:1px solid var(--border)}
+.scan-status{padding:10px;border-radius:8px;font-size:.83rem;margin:8px 0}
+
+/* PHOTO ATTACH */
+.photo-thumb{width:60px;height:60px;object-fit:cover;border-radius:6px;border:1px solid var(--border);margin-right:6px;cursor:pointer}
+
+@media(min-width:500px){.stats-grid{grid-template-columns:1fr 1fr 1fr 1fr}}
+@media print{.bnav,.topbar,.btn,.modal-bg{display:none!important}.page{display:block!important;padding:0}}
+</style>
+</head>
+<body>
+
+<div id="login-screen" style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--forest);padding:20px">
+  <div style="background:var(--white);border-radius:16px;padding:32px 24px;width:100%;max-width:360px;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.3)">
+    <div style="font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--forest);font-weight:700;margin-bottom:4px">J. Glover</div>
+    <div style="font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:24px">Landscaping Business Manager</div>
+    <div style="font-size:2.5rem;margin-bottom:16px">🌿</div>
+    <label style="text-align:left">Password</label>
+    <input type="password" id="login-pw" placeholder="Enter password" style="margin-bottom:8px;font-size:1rem;padding:12px">
+    <div id="login-error" style="display:none;color:var(--rust);font-size:.82rem;margin-bottom:8px;font-weight:600">Incorrect password. Please try again.</div>
+    <button onclick="login()" class="btn btn-primary btn-block" style="font-size:1rem;padding:12px">Unlock</button>
+    <div style="font-size:.72rem;color:var(--muted);margin-top:16px">J. Glover Landscaping &amp; Lawn Maintenance · (352) 804-4385</div>
+  </div>
+</div>
+
+<div id="app-wrapper" style="display:none">
+<div class="topbar">
+  <div class="brand">J. Glover Landscaping<small>Business Manager</small></div>
+  <button class="top-year" onclick="cycleYear()">📅 <span id="yearDisplay">2026</span></button>
+</div>
+
+<!-- ═══════════════════════════ PAGES ═══════════════════════════ -->
+
+<div class="page active" id="pg-dash">
+  <div class="stats-grid">
+    <div class="stat-box"><div class="stat-label">Revenue</div><div class="stat-value" id="ds-revenue">$0</div><div class="stat-sub" id="ds-revyear">YTD 2026</div></div>
+    <div class="stat-box gold"><div class="stat-label">Deposits Held</div><div class="stat-value" id="ds-deposits">$0</div><div class="stat-sub">Awaiting completion</div></div>
+    <div class="stat-box sky"><div class="stat-label">Balance Due</div><div class="stat-value" id="ds-balance">$0</div><div class="stat-sub">Signed jobs only</div></div>
+    <div class="stat-box rust"><div class="stat-label">Est. Tax</div><div class="stat-value" id="ds-tax">$0</div><div class="stat-sub">Self-emp + Federal</div></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><h2>Upcoming Scheduled Jobs</h2><button class="btn btn-gold btn-sm" onclick="showPage('pg-sched',this)">Full Schedule</button></div>
+    <div class="card-body" id="dash-upcoming"></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><h2>Recent Jobs</h2><button class="btn btn-gold btn-sm" onclick="showPage('pg-jobs',this)">View All</button></div>
+    <div class="card-body" id="dash-recent"></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><h2>Quarterly Tax Reminders</h2></div>
+    <div class="card-body">
+      <div class="alert alert-gold">⚠️ Estimates only. Confirm filing status with a tax professional.</div>
+      <div class="quarter-grid" id="dash-quarters"></div>
+    </div>
+  </div>
+</div>
+
+<!-- QUOTES -->
+<div class="page" id="pg-quotes">
+  <div class="sec-head"><h3>Quotes / Proposals</h3>
+    <div style="display:flex;gap:6px">
+      <button class="btn btn-sage btn-sm" onclick="openModal('modal-scan')">📷 Scan Quote</button>
+      <button class="btn btn-primary btn-sm" onclick="openNewQuote()">+ New</button>
+    </div>
+  </div>
+  <div class="card"><div class="card-body tbl-wrap"><div id="quotes-list"></div></div></div>
+</div>
+
+<!-- JOBS -->
+<div class="page" id="pg-jobs">
+  <div class="sec-head"><h3>Job Tracker</h3><button class="btn btn-primary btn-sm" onclick="openNewJob()">+ New Job</button></div>
+  <div class="card"><div class="card-body tbl-wrap"><div id="jobs-list"></div></div></div>
+</div>
+
+<!-- SCHEDULE -->
+<div class="page" id="pg-sched">
+  <div class="sec-head"><h3>Job Schedule</h3></div>
+  <div class="card">
+    <div class="card-body">
+      <div class="cal-header">
+        <button class="cal-nav" onclick="calPrev()">‹ Prev</button>
+        <h3 id="cal-title">April 2026</h3>
+        <button class="cal-nav" onclick="calNext()">Next ›</button>
+      </div>
+      <div class="cal-grid" id="cal-names"></div>
+      <div class="cal-grid" id="cal-grid"></div>
+      <div class="cal-legend">
+        <div class="cal-legend-item"><div class="cal-legend-dot dot-quoted"></div>Quoted</div>
+        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--gold);width:10px;height:10px;border-radius:2px"></div>Signed – Pending Schedule</div>
+        <div class="cal-legend-item"><div class="cal-legend-dot dot-active"></div>Scheduled / In Progress</div>
+        <div class="cal-legend-item"><div class="cal-legend-dot dot-complete"></div>Complete</div>
+        <div class="cal-legend-item"><div class="cal-legend-dot dot-paid"></div>Paid</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head"><h2>⏳ Signed – Awaiting Schedule</h2></div>
+    <div class="card-body"><div id="awaiting-list"></div></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><h2>Confirmed / Upcoming Jobs</h2></div>
+    <div class="card-body tbl-wrap"><div id="sched-list"></div></div>
+  </div>
+</div>
+
+<!-- EXPENSES -->
+<div class="page" id="pg-exp">
+  <div class="sec-head"><h3>Expenses &amp; Equipment</h3>
+    <div style="display:flex;gap:6px">
+      <button class="btn btn-sage btn-sm" onclick="openModal('modal-receipt-scan')">📷 Scan Receipt</button>
+      <button class="btn btn-primary btn-sm" onclick="openModal('modal-exp')">+ Add</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head"><h2>Year-to-Date</h2></div>
+    <div class="card-body">
+      <div class="stats-grid" style="margin-bottom:0">
+        <div class="stat-box"><div class="stat-label">Total Expenses</div><div class="stat-value" id="exp-total">$0</div></div>
+        <div class="stat-box gold"><div class="stat-label">Deductible</div><div class="stat-value" id="exp-deduct">$0</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="card"><div class="card-body tbl-wrap"><div id="exp-list"></div></div></div>
+</div>
+
+<!-- TAX -->
+<div class="page" id="pg-tax">
+  <div class="card">
+    <div class="card-head"><h2>Tax Summary <span id="tax-year-label">2026</span></h2></div>
+    <div class="card-body">
+      <div class="alert alert-gold">⚠️ Estimates only. Verify with a licensed tax professional.</div>
+      <div class="tax-row"><span>Gross Revenue (payments received)</span><span id="tx-gross">$0.00</span></div>
+      <div class="tax-row"><span>Total Deductible Expenses</span><span id="tx-exp">– $0.00</span></div>
+      <div class="tax-row total"><span>Estimated Net Profit</span><span id="tx-net">$0.00</span></div>
+      <div class="divider"></div>
+      <div class="tax-row"><span>Self-Employment Tax (15.3%)</span><span id="tx-se">$0.00</span></div>
+      <div class="tax-row"><span>SE Deduction (½ of SE tax)</span><span id="tx-seded">– $0.00</span></div>
+      <div class="tax-row"><span>Taxable Income</span><span id="tx-taxable">$0.00</span></div>
+      <div class="tax-row"><span>Est. Federal Income Tax</span><span id="tx-fed">$0.00</span></div>
+      <div class="tax-row total"><span>Total Est. Tax Owed</span><span id="tx-total">$0.00</span></div>
+      <div class="divider"></div>
+      <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:6px">Estimated Quarterly Payments</div>
+      <div class="quarter-grid" id="tax-quarters"></div>
+      <button class="btn btn-sky btn-block" onclick="exportTaxCSV()">⬇ Export Tax Summary (CSV)</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ MODALS ═══════════════════════════ -->
+
+<!-- QUOTE MODAL -->
+<div class="modal-bg" id="modal-quote">
+  <div class="modal">
+    <div class="modal-head"><h2 id="quote-modal-title">New Quote</h2><button class="modal-close" onclick="closeModal('modal-quote')">✕</button></div>
+    <div class="form-row">
+      <div class="form-col"><label>Customer Name</label><input id="q-cust" placeholder="Full name"></div>
+      <div class="form-col"><label>Date</label><input type="date" id="q-date"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-col"><label>Phone</label><input id="q-phone" placeholder="(000) 000-0000"></div>
+      <div class="form-col"><label>Email</label><input id="q-email" placeholder="email@example.com"></div>
+    </div>
+    <div class="form-col"><label>Property / Job Address</label><input id="q-addr" placeholder="123 Main St, Ocala FL"></div>
+    <div id="q-sections"></div>
+    <div style="display:flex;gap:6px;margin-bottom:10px">
+      <button class="btn btn-outline btn-sm" onclick="addQSection()">+ Add Section</button>
+    </div>
+    <div class="form-row">
+      <div class="form-col"><label>Valid For</label>
+        <select id="q-valid"><option value="30">30 Days</option><option value="60">60 Days</option><option value="90">90 Days</option></select>
+      </div>
+      <div class="form-col"><label>Deposit Required</label>
+        <select id="q-dep-type" onchange="renderQSections()"><option value="none">None</option><option value="half">50% of Total</option><option value="custom">Custom Amount</option></select>
+      </div>
+    </div>
+    <div class="form-col" id="q-dep-custom-row" style="display:none"><label>Custom Deposit ($)</label><input type="number" id="q-dep-amt" placeholder="0.00"></div>
+    <div class="form-col"><label>Notes</label><textarea id="q-notes"></textarea></div>
+    <!-- Sent PDF attach -->
+    <div class="form-col">
+      <label>Attach Sent Proposal PDF</label>
+      <div id="q-sentpdf-preview" style="font-size:.78rem;color:var(--muted);margin-bottom:6px">No PDF attached yet.</div>
+      <input type="file" id="q-sentpdf-input" accept="image/*,.pdf" style="display:none" onchange="handleSentPDFAttach(event)">
+      <button class="btn btn-outline btn-sm" onclick="document.getElementById('q-sentpdf-input').click()">📎 Attach Sent Proposal PDF</button>
+    </div>
+    <!-- Photo attach -->
+    <div class="form-col">
+      <label>Attached Photo(s)</label>
+      <div id="q-photos-preview" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px"></div>
+      <input type="file" id="q-photo-input" accept="image/*" multiple style="display:none" onchange="handleQuotePhotoAttach(event)">
+      <button class="btn btn-outline btn-sm" onclick="document.getElementById('q-photo-input').click()">📎 Attach Photo</button>
+    </div>
+    <div id="q-preview"></div>
+    <button class="btn btn-gold btn-block" onclick="previewQuote()">👁 Preview</button>
+    <button class="btn btn-primary btn-block" onclick="saveQuote()">💾 Save Quote</button>
+    <input type="hidden" id="q-edit-id">
+    <input type="hidden" id="q-photos-data">
+    <input type="hidden" id="q-sentpdf-data">
+  </div>
+</div>
+
+<!-- SCAN MODAL -->
+<div class="modal-bg" id="modal-scan">
+  <div class="modal">
+    <div class="modal-head"><h2>Scan Handwritten Quote</h2><button class="modal-close" onclick="closeModal('modal-scan')">✕</button></div>
+    <div class="alert alert-sky">Drop or select a photo of a handwritten quote. AI will read it and fill in the form automatically.</div>
+    <div class="scan-drop" id="scan-drop" onclick="document.getElementById('scan-input').click()" ondragover="scanDragOver(event)" ondrop="scanDrop(event)">
+      <input type="file" id="scan-input" accept="image/*" onchange="handleScanFile(event)">
+      <div style="font-size:2rem">📷</div>
+      <div style="font-weight:700;color:var(--forest);margin:6px 0">Tap to select photo</div>
+      <div style="font-size:.78rem;color:var(--muted)">or drag and drop here</div>
+    </div>
+    <img id="scan-preview-img" class="scan-preview" style="display:none">
+    <div id="scan-status"></div>
+    <button class="btn btn-primary btn-block" id="scan-btn" style="display:none" onclick="runAIScan()">🤖 Read Quote with AI</button>
+  </div>
+</div>
+
+<!-- JOB MODAL -->
+<div class="modal-bg" id="modal-job">
+  <div class="modal">
+    <div class="modal-head"><h2 id="job-modal-title">New Job</h2><button class="modal-close" onclick="closeModal('modal-job')">✕</button></div>
+    <div class="form-row">
+      <div class="form-col"><label>Customer Name</label><input id="j-cust" placeholder="Customer name"></div>
+      <div class="form-col"><label>Address</label><input id="j-addr" placeholder="Job address"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-col"><label>Quote Date</label><input type="date" id="j-qdate"></div>
+      <div class="form-col"><label>Signed Date</label><input type="date" id="j-signed"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-col"><label>Start Date</label><input type="date" id="j-start"></div>
+      <div class="form-col"><label>Completion Date</label><input type="date" id="j-end"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-col"><label>Status</label>
+        <select id="j-status">
+          <option value="quoted">Quoted</option>
+          <option value="signed">Signed – Awaiting Schedule</option>
+          <option value="scheduled">Signed &amp; Scheduled</option>
+          <option value="active">In Progress</option>
+          <option value="complete">Complete</option>
+          <option value="invoiced">Invoiced</option>
+          <option value="paid">Paid in Full</option>
+        </select>
+      </div>
+      <div class="form-col"><label>Payment Method</label>
+        <select id="j-paymethod"><option>Cash</option><option>Check</option><option>Venmo</option><option>Zelle</option><option>Other</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-col"><label>Total Job Amount ($)</label><input type="number" id="j-total" placeholder="0.00" oninput="calcJobBalance()"></div>
+      <div class="form-col"><label>Deposit Amount ($)</label><input type="number" id="j-deposit" placeholder="0.00" oninput="calcJobBalance()"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-col"><label>Deposit Received?</label>
+        <select id="j-dep-recvd"><option value="no">No</option><option value="yes">Yes</option></select>
+      </div>
+      <div class="form-col"><label>Amount Paid to Date ($)</label><input type="number" id="j-paid" placeholder="0.00" oninput="calcJobBalance()"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-col"><label>Balance Due ($)</label><input type="number" id="j-balance" readonly></div>
+      <div class="form-col"><label>Linked Quote ID (optional)</label><input id="j-qlink" placeholder="Auto-filled if converted"></div>
+    </div>
+    <div class="form-col"><label>Job Description / Notes</label><textarea id="j-notes"></textarea></div>
+    <input type="hidden" id="j-edit-id">
+    <button class="btn btn-primary btn-block" onclick="saveJob()">💾 Save Job</button>
+    <button class="btn btn-gold btn-block" id="j-invoice-btn" style="display:none" onclick="generateInvoiceById(document.getElementById('j-edit-id').value)">🧾 Generate Invoice</button>
+  </div>
+</div>
+
+<!-- EXPENSE MODAL -->
+<div class="modal-bg" id="modal-exp">
+  <div class="modal">
+    <div class="modal-head"><h2>Add Expense</h2><button class="modal-close" onclick="closeModal('modal-exp')">✕</button></div>
+    <div class="form-row">
+      <div class="form-col"><label>Date</label><input type="date" id="e-date"></div>
+      <div class="form-col"><label>Amount ($)</label><input type="number" id="e-amt" placeholder="0.00"></div>
+    </div>
+    <div class="form-col"><label>Description</label><input id="e-desc" placeholder="e.g. Fuel, trimmer repair"></div>
+    <div class="form-row">
+      <div class="form-col"><label>Category</label>
+        <select id="e-cat">
+          <option>Fuel &amp; Vehicle</option><option>Tools &amp; Equipment Purchase</option>
+          <option>Equipment Repair &amp; Maintenance</option><option>Supplies &amp; Materials</option>
+          <option>Subcontractors</option><option>Insurance</option>
+          <option>Phone (Business Use)</option><option>Marketing &amp; Advertising</option>
+          <option>Office &amp; Admin</option><option>Other</option>
+        </select>
+      </div>
+      <div class="form-col"><label>Tax Deductible?</label>
+        <select id="e-deduct"><option value="yes">Yes</option><option value="no">No</option></select>
+      </div>
+    </div>
+    <div class="form-col"><label>Notes</label><input id="e-notes" placeholder="Receipt #, Section 179, etc."></div>
+    <input type="hidden" id="e-edit-id">
+    <button class="btn btn-primary btn-block" onclick="saveExpense()">💾 Save Expense</button>
+  </div>
+</div>
+
+<!-- RECEIPT SCAN MODAL -->
+<div class="modal-bg" id="modal-receipt-scan">
+  <div class="modal">
+    <div class="modal-head"><h2>Scan Receipt</h2><button class="modal-close" onclick="closeModal('modal-receipt-scan')">✕</button></div>
+    <div class="alert alert-sky">Take or upload a photo of any receipt. AI will read the amount, vendor, date, and suggest the correct expense category and tax deductibility.</div>
+    <div class="scan-drop" id="receipt-drop" onclick="document.getElementById('receipt-input').click()" ondragover="receiptDragOver(event)" ondrop="receiptDrop(event)">
+      <input type="file" id="receipt-input" accept="image/*" onchange="handleReceiptFile(event)">
+      <div style="font-size:2rem">🧾</div>
+      <div style="font-weight:700;color:var(--forest);margin:6px 0">Tap to select receipt photo</div>
+      <div style="font-size:.78rem;color:var(--muted)">or drag and drop here</div>
+    </div>
+    <img id="receipt-preview-img" class="scan-preview" style="display:none">
+    <div id="receipt-status"></div>
+    <button class="btn btn-primary btn-block" id="receipt-scan-btn" style="display:none" onclick="runReceiptScan()">🤖 Read Receipt with AI</button>
+  </div>
+</div>
+
+<!-- VIEW QUOTE MODAL -->
+<div class="modal-bg" id="modal-view-quote">
+  <div class="modal">
+    <div class="modal-head"><h2 id="vq-title">Quote / Proposal</h2><button class="modal-close" onclick="closeModal('modal-view-quote')">✕</button></div>
+
+    <!-- TABS -->
+    <div style="display:flex;gap:6px;margin-bottom:12px">
+      <button class="btn btn-primary btn-sm" id="vq-tab-sent" onclick="vqShowTab('sent')">📄 Sent Proposal</button>
+      <button class="btn btn-outline btn-sm" id="vq-tab-signed" onclick="vqShowTab('signed')">✍️ Signed Copy</button>
+    </div>
+
+    <!-- SENT PROPOSAL TAB -->
+    <div id="vq-sent-panel">
+      <div id="vq-sent-content"></div>
+      <div style="margin-top:10px">
+        <input type="file" id="sent-pdf-input" accept="image/*,.pdf" style="display:none" onchange="attachSentPDF(event)">
+        <button class="btn btn-outline btn-sm" onclick="document.getElementById('sent-pdf-input').click()">📎 Replace Sent PDF</button>
+      </div>
+    </div>
+
+    <!-- SIGNED COPY TAB -->
+    <div id="vq-signed-panel" style="display:none">
+      <div id="vq-signed-content"></div>
+      <div style="margin-top:10px">
+        <input type="file" id="signed-copy-input" accept="image/*,.pdf" style="display:none" onchange="attachSignedCopy(event)">
+        <button class="btn btn-sage btn-sm" onclick="document.getElementById('signed-copy-input').click()">📎 Attach / Replace Signed Copy</button>
+      </div>
+    </div>
+
+    <input type="hidden" id="view-quote-id">
+  </div>
+</div>
+
+<!-- INVOICE MODAL -->
+<div class="modal-bg" id="modal-invoice">
+  <div class="modal">
+    <div class="modal-head"><h2>Invoice</h2><button class="modal-close" onclick="closeModal('modal-invoice')">✕</button></div>
+    <div id="invoice-content"></div>
+    <button class="btn btn-primary btn-block" onclick="window.print()">🖨 Print / Save Invoice</button>
+  </div>
+</div>
+
+<!-- SCHEDULE JOB MODAL -->
+<div class="modal-bg" id="modal-schedule-job">
+  <div class="modal">
+    <div class="modal-head"><h2 id="sched-modal-title">Schedule Job</h2><button class="modal-close" onclick="closeModal('modal-schedule-job')">✕</button></div>
+    <div class="alert alert-sky">Set the start date to add this job to the calendar. You can also set an estimated end date.</div>
+    <div style="background:var(--sand);border-radius:8px;padding:12px;margin-bottom:12px">
+      <div style="font-weight:700;color:var(--forest)" id="sched-cust-name"></div>
+      <div style="font-size:.82rem;color:var(--muted)" id="sched-cust-addr"></div>
+      <div style="font-size:.82rem;color:var(--muted)" id="sched-cust-total"></div>
+      <div style="font-size:.82rem;color:var(--muted)" id="sched-cust-notes"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-col"><label>Start Date</label><input type="date" id="sched-start"></div>
+      <div class="form-col"><label>Est. End Date (optional)</label><input type="date" id="sched-end"></div>
+    </div>
+    <div class="form-col"><label>Notes for Schedule</label><input id="sched-notes" placeholder="Any scheduling notes..."></div>
+    <input type="hidden" id="sched-job-id">
+    <button class="btn btn-primary btn-block" onclick="confirmScheduleJob()">📅 Add to Schedule</button>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bnav">
+  <button class="bnav-btn active" onclick="showPage('pg-dash',this)">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dash
+  </button>
+  <button class="bnav-btn" onclick="showPage('pg-quotes',this)">
+    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Quotes
+  </button>
+  <button class="bnav-btn" onclick="showPage('pg-jobs',this)">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>Jobs
+  </button>
+  <button class="bnav-btn" onclick="showPage('pg-sched',this)">
+    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Schedule
+  </button>
+  <button class="bnav-btn" onclick="showPage('pg-exp',this)">
+    <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Expenses
+  </button>
+  <button class="bnav-btn" onclick="showPage('pg-tax',this)">
+    <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Taxes
+  </button>
+</nav>
+
+<script>
+// ══════════════════════════════════════════════════════
+//  SUPABASE CONFIG
+// ══════════════════════════════════════════════════════
+const SUPA_URL = 'https://cmhdacmcsmfprwufcovc.supabase.co';
+const SUPA_KEY = 'sb_publishable_QXlZ22zcRmvVTc93lvAQSA_OUvjzMcd';
+const APP_PASSWORD = 'jglover2026';
+
+async function sbFetch(path, method='GET', body=null){
+  const opts={method,headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'}};
+  if(body) opts.body=JSON.stringify(body);
+  const r=await fetch(SUPA_URL+'/rest/v1/'+path,opts);
+  if(!r.ok){ const e=await r.text(); throw new Error(e); }
+  const t=await r.text(); return t?JSON.parse(t):[];
+}
+
+// ── AUTH ──────────────────────────────────────────────
+function checkAuth(){
+  return sessionStorage.getItem('jglover_auth')==='yes';
+}
+function login(){
+  const pw=document.getElementById('login-pw').value;
+  if(pw===APP_PASSWORD){
+    sessionStorage.setItem('jglover_auth','yes');
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app-wrapper').style.display='block';
+    initApp();
+  } else {
+    document.getElementById('login-error').style.display='block';
+    document.getElementById('login-pw').value='';
+  }
+}
+document.addEventListener('keydown',e=>{ if(e.key==='Enter'&&document.getElementById('login-screen').style.display!=='none') login(); });
+
+// ══════════════════════════════════════════════════════
+//  DATA -- Supabase backed
+// ══════════════════════════════════════════════════════
+let currentYear = new Date().getFullYear();
+let data = { quotes:[], jobs:[], expenses:[] };
+
+function gy(){ return String(currentYear); }
+function yd(){ return data; }
+
+async function loadAllData(){
+  try{
+    const [quotes,jobs,expenses]=await Promise.all([
+      sbFetch('quotes?year=eq.'+gy()+'&order=created_at.desc'),
+      sbFetch('jobs?year=eq.'+gy()+'&order=created_at.desc'),
+      sbFetch('expenses?year=eq.'+gy()+'&order=created_at.desc')
+    ]);
+    data.quotes=quotes.map(q=>({
+      id:q.id, date:q.date, customer:q.customer, phone:q.phone,
+      email:q.email, address:q.address, sections:q.sections||[],
+      total:q.total, deposit:q.deposit, validDays:q.valid_days,
+      notes:q.notes, status:q.status, photos:q.photos||[],
+      signedCopy:q.signed_copy, sentPDF:q.sent_pdf
+    }));
+    data.jobs=jobs.map(j=>({
+      id:j.id, customer:j.customer, address:j.address,
+      quoteDate:j.quote_date, signedDate:j.signed_date,
+      startDate:j.start_date, endDate:j.end_date,
+      status:j.status, total:j.total, deposit:j.deposit,
+      depositReceived:j.deposit_received, paid:j.paid,
+      balance:j.balance, payMethod:j.pay_method,
+      notes:j.notes, linkedQuote:j.linked_quote
+    }));
+    data.expenses=expenses.map(e=>({
+      id:e.id, date:e.date, desc:e.description,
+      amt:e.amount, category:e.category,
+      deductible:e.deductible, notes:e.notes
+    }));
+  } catch(err){ showToast('Error loading data: '+err.message,'rust'); }
+}
+
+async function saveQuoteDB(q){
+  const row={id:q.id,year:gy(),customer:q.customer,phone:q.phone,email:q.email,
+    address:q.address,date:q.date,sections:q.sections,total:q.total,
+    deposit:q.deposit,valid_days:q.validDays,notes:q.notes,status:q.status,
+    photos:q.photos||[],signed_copy:q.signedCopy||null,sent_pdf:q.sentPDF||null};
+  await sbFetch('quotes?id=eq.'+q.id,'DELETE');
+  await sbFetch('quotes','POST',row);
+}
+
+async function saveJobDB(j){
+  const row={id:j.id,year:gy(),customer:j.customer,address:j.address,
+    quote_date:j.quoteDate,signed_date:j.signedDate,start_date:j.startDate,
+    end_date:j.endDate,status:j.status,total:j.total,deposit:j.deposit,
+    deposit_received:j.depositReceived,paid:j.paid,balance:j.balance,
+    pay_method:j.payMethod,notes:j.notes,linked_quote:j.linkedQuote||null};
+  await sbFetch('jobs?id=eq.'+j.id,'DELETE');
+  await sbFetch('jobs','POST',row);
+}
+
+async function saveExpenseDB(e){
+  const row={id:e.id,year:gy(),date:e.date,description:e.desc,
+    amount:e.amt,category:e.category,deductible:e.deductible,notes:e.notes};
+  await sbFetch('expenses?id=eq.'+e.id,'DELETE');
+  await sbFetch('expenses','POST',row);
+}
+
+async function deleteJobDB(id){ await sbFetch('jobs?id=eq.'+id,'DELETE'); }
+async function deleteQuoteDB(id){ await sbFetch('quotes?id=eq.'+id,'DELETE'); }
+async function deleteExpenseDB(id){ await sbFetch('expenses?id=eq.'+id,'DELETE'); }
+
+function showToast(msg, type='green'){
+  let t=document.getElementById('toast');
+  if(!t){ t=document.createElement('div'); t.id='toast';
+    t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);padding:10px 20px;border-radius:8px;font-size:.85rem;font-weight:700;z-index:9999;transition:opacity .3s;color:white;max-width:90vw;text-align:center';
+    document.body.appendChild(t); }
+  t.style.background=type==='rust'?'var(--rust)':type==='gold'?'var(--bark)':'var(--leaf)';
+  t.textContent=msg; t.style.opacity='1';
+  setTimeout(()=>t.style.opacity='0',2500);
+}
+
+// Legacy stubs -- no-ops since we use async DB functions now
+function saveData(){}
+function savePDF(quoteId,type,dataUrl){}
+function loadPDF(quoteId,type){ return null; }
+function deletePDF(quoteId,type){}
+function hydratePDFs(){}
+
+
+// ── SEED DATA ────────────────────────────────────────
+function seedIfEmpty(){
+  if(!data['2026']) data['2026']={quotes:[],jobs:[],expenses:[]};
+  const d = data['2026'];
+  if(!d.quotes) d.quotes=[];
+  if(!d.jobs) d.jobs=[];
+  if(!d.expenses) d.expenses=[];
+
+  // Always ensure the 3 known quotes exist (check by id)
+  const quoteIds=d.quotes.map(q=>q.id);
+
+  // Quote 1 - Carelock Business Property
+  if(!quoteIds.includes('q-carelock-biz-001')) d.quotes.push({
+    id:'q-carelock-biz-001',
+    date:'2026-04-04',
+    customer:'Mr. Elgin Carelock',
+    phone:'404-993-7189',
+    email:'ecarelock@re-viewyourbusiness.com',
+    address:'5251 NW 49th Ave, Ocala, FL',
+    sections:[{id:'s1',label:'Scope of Work',items:[
+      {desc:'Tree removal and trimming – north and south sides of residence',amt:''},
+      {desc:'Clearing along north property line',amt:''},
+      {desc:'Full lawn and landscape cleanup – entire property',amt:''},
+      {desc:'All debris and disposal included',amt:''},
+    ]}],
+    total:4200, deposit:2100, validDays:'30',
+    notes:'Half due at signing, remainder due upon completion.',
+    photos:[], status:'sent'
+  });
+
+  // Quote 2 - Carelock Residence
+  if(!quoteIds.includes('q-carelock-res-001')) d.quotes.push({
+    id:'q-carelock-res-001',
+    date:'2026-04-26',
+    customer:'Mr. Elgin Carelock',
+    phone:'404-993-7189',
+    email:'ecarelock@re-viewyourbusiness.com',
+    address:'6510 SW 51st Terrace, Ocala, FL 34474',
+    sections:[{id:'s1',label:'Landscape Design / Plant & Stone Installation',items:[
+      {desc:'Installation of (2) tier landscape plan around residence wall',amt:''},
+      {desc:'Installation of (2) accent trees within front kidney-shaped flower beds',amt:''},
+      {desc:'#2 Pebble Stones to be installed to complement existing stones',amt:''},
+      {desc:'Plant material, disposal fees, ground cover included',amt:''},
+    ]}],
+    total:2000, deposit:0, validDays:'30',
+    notes:'Cash or Check.',
+    photos:[], status:'signed'
+  });
+
+  // Quote 3 - Wickett Farm
+  if(!quoteIds.includes('q-wickett-farm-001')) d.quotes.push({
+    id:'q-wickett-farm-001',
+    date:'2026-04-26',
+    customer:'Mrs. Lee Ann Wickett',
+    phone:'(352) 438-4086',
+    email:'leeannwickett@ymail.com',
+    address:'Farm property, Ocala FL',
+    sections:[
+      {id:'s1',label:'Section A – Irrigation Re-establishment',items:[
+        {desc:'Re-establishing existing drip line irrigation hose on entire farm – check for breaks and blockages',amt:''},
+        {desc:'Bamboo 1,031 LF | Sweet Viburnum 555 LF | Portocarpus Hedge 350 LF | Loropetalum Trees 70 LF (Total approx. 1,976 LF)',amt:''},
+      ]},
+      {id:'s2',label:'Section B – Facial Trimming',items:[
+        {desc:'Facial trimming of all hedge material and all bamboo material – improves growth pattern and increases density',amt:''},
+      ]}
+    ],
+    total:5400, deposit:0, validDays:'30',
+    notes:'Section A: $2,900 | Section B: $2,500. Tentative start 05/03/2026, duration approx. 2-3 days.',
+    photos:[], status:'sent'
+  });
+
+  const jobIds=d.jobs.map(j=>j.id);
+
+  if(!jobIds.includes('carelock-biz-001')) d.jobs.push({
+    id:'carelock-biz-001',
+    customer:'Mr. Elgin Carelock',
+    address:'5251 NW 49th Ave, Ocala, FL',
+    quoteDate:'2026-04-04',
+    signedDate:'',
+    startDate:'',
+    endDate:'',
+    status:'quoted',
+    total:4200,
+    deposit:2100,
+    depositReceived:'no',
+    paid:0,
+    balance:4200,
+    payMethod:'Cash',
+    notes:'Tree removal and trimming north and south sides of residence. Clearing along north property line. Full lawn and landscape cleanup entire property. Debris and disposal included.'
+  });
+
+  // Job 2 - Carelock Residence (signed today, scheduled 4/29)
+  if(!jobIds.includes('carelock-res-001')) d.jobs.push({
+    id:'carelock-res-001',
+    customer:'Mr. Elgin Carelock',
+    address:'6510 SW 51st Terrace, Ocala, FL 34474',
+    quoteDate:'2026-04-26',
+    signedDate:'2026-04-26',
+    startDate:'2026-04-29',
+    endDate:'',
+    status:'scheduled',
+    total:2000,
+    deposit:0,
+    depositReceived:'no',
+    paid:0,
+    balance:2000,
+    payMethod:'Cash',
+    notes:'Landscape Design / Plant & Stone Installation. Installation of (2) tier landscape plan around residence wall. Installation of (2) accent trees within front kidney-shaped flower beds. #2 Pebble Stones to complement existing stones. Plant material, disposal fees, ground cover included.'
+  });
+
+  // Job 3 - Wickett Farm (quoted, not signed)
+  if(!jobIds.includes('wickett-farm-001')) d.jobs.push({
+    id:'wickett-farm-001',
+    customer:'Mrs. Lee Ann Wickett',
+    address:'Farm property, Ocala FL',
+    quoteDate:'2026-04-26',
+    signedDate:'',
+    startDate:'2026-05-03',
+    endDate:'',
+    status:'quoted',
+    total:5400,
+    deposit:0,
+    depositReceived:'no',
+    paid:0,
+    balance:5400,
+    payMethod:'Cash',
+    notes:'Section A: Re-establishing existing drip line irrigation hose on entire farm. Check for breaks and blockages. Bamboo 1031 LF, Sweet Viburnum 555 LF, Portocarpus hedge 350 LF, Loropetalum trees 70 LF. Total approx 1976 LF. Total $2,900.\nSection B: Facial trimming of all hedge material and all bamboo material. Helps overall growth pattern and increases density. Total $2,500.'
+  });
+
+// seedIfEmpty removed -- data now lives in Supabase
+
+// ══════════════════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════════════════
+function today(){ return new Date().toISOString().slice(0,10); }
+function fmt(n){ return '$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+function statusBadge(s){
+  const map={quoted:'badge-muted',signed:'badge-gold',scheduled:'badge-sky',active:'badge-sky',complete:'badge-green',invoiced:'badge-gold',paid:'badge-green'};
+  const labels={quoted:'Quoted',signed:'Signed – Pending Schedule',scheduled:'Scheduled',active:'In Progress',complete:'Complete',invoiced:'Invoiced',paid:'Paid'};
+  return `<span class="badge ${map[s]||'badge-muted'}">${labels[s]||s}</span>`;
+}
+async function cycleYear(){
+  currentYear = currentYear === new Date().getFullYear() ? new Date().getFullYear()-1 : new Date().getFullYear();
+  document.getElementById('yearDisplay').textContent=currentYear;
+  await loadAllData();
+  refreshAll();
+}
+
+// ══════════════════════════════════════════════════════
+//  NAV
+// ══════════════════════════════════════════════════════
+function showPage(id, btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  if(id==='pg-tax') renderTax();
+  if(id==='pg-sched') renderSchedule();
+}
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+// ══════════════════════════════════════════════════════
+//  QUOTE FORM
+// ══════════════════════════════════════════════════════
+let qSections=[];
+let qPhotosAttached=[];
+let qSentPDF=null;
+
+function openNewQuote(){
+  document.getElementById('quote-modal-title').textContent='New Quote';
+  document.getElementById('q-edit-id').value='';
+  qSections=[{id:uid(),label:'',items:[{desc:'',amt:''}]}];
+  qPhotosAttached=[];
+  qSentPDF=null;
+  document.getElementById('q-date').value=today();
+  ['q-cust','q-phone','q-email','q-addr','q-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('q-dep-type').value='none';
+  document.getElementById('q-photos-preview').innerHTML='';
+  document.getElementById('q-sentpdf-preview').innerHTML='No PDF attached yet.';
+  document.getElementById('q-preview').innerHTML='';
+  renderQSections();
+  openModal('modal-quote');
+}
+
+function addQSection(){ qSections.push({id:uid(),label:'',items:[{desc:'',amt:''}]}); renderQSections(); }
+
+function addQLineItem(si){ qSections[si].items.push({desc:'',amt:''}); renderQSections(); }
+
+function removeQLineItem(si,ii){
+  qSections[si].items.splice(ii,1);
+  if(!qSections[si].items.length) qSections[si].items.push({desc:'',amt:''});
+  renderQSections();
+}
+function removeQSection(si){ if(qSections.length>1){qSections.splice(si,1);renderQSections();} }
+
+function syncQSections(){
+  qSections.forEach((sec,si)=>{
+    const el=document.getElementById('qsl-'+sec.id);
+    if(el) sec.label=el.value;
+    sec.items.forEach((item,ii)=>{
+      const d=document.getElementById('qid-'+si+'-'+ii);
+      const a=document.getElementById('qia-'+si+'-'+ii);
+      if(d) item.desc=d.value;
+      if(a) item.amt=a.value;
+    });
+  });
+}
+
+function renderQSections(){
+  syncQSections();
+  const wrap=document.getElementById('q-sections');
+  wrap.innerHTML='';
+  qSections.forEach((sec,si)=>{
+    const secTotal=sec.items.reduce((s,i)=>s+parseFloat(i.amt||0),0);
+    let itemsHTML=sec.items.map((item,ii)=>`
+      <div class="li-row">
+        <input id="qid-${si}-${ii}" placeholder="Description" value="${item.desc||''}" oninput="syncQSections()">
+        <input id="qia-${si}-${ii}" type="number" placeholder="$0.00" value="${item.amt||''}" oninput="syncQSections();renderQSections()" style="text-align:right">
+        <button onclick="removeQLineItem(${si},${ii})" style="background:var(--rust);color:white;border:none;border-radius:6px;width:28px;height:34px;cursor:pointer">×</button>
+      </div>`).join('');
+    wrap.innerHTML+=`
+      <div style="border:1.5px solid var(--border);border-radius:10px;padding:10px;margin-bottom:8px;background:var(--cream)">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+          <input id="qsl-${sec.id}" placeholder="Section label (e.g. Section A)" value="${sec.label||''}" style="flex:1" oninput="syncQSections()">
+          ${qSections.length>1?`<button onclick="removeQSection(${si})" class="btn btn-rust btn-sm">✕</button>`:''}
+        </div>
+        ${itemsHTML}
+        <div class="li-total-row"><span class="li-total">Section Total: ${fmt(secTotal)}</span></div>
+        <button onclick="addQLineItem(${si})" class="btn btn-outline btn-sm" style="margin-top:6px">+ Line Item</button>
+      </div>`;
+  });
+  document.getElementById('q-dep-custom-row').style.display=
+    document.getElementById('q-dep-type').value==='custom'?'block':'none';
+}
+
+function getQuoteTotal(){ syncQSections(); return qSections.reduce((s,sec)=>s+sec.items.reduce((ss,i)=>ss+parseFloat(i.amt||0),0),0); }
+function getQuoteDeposit(total){
+  const t=document.getElementById('q-dep-type').value;
+  if(t==='half') return total/2;
+  if(t==='custom') return parseFloat(document.getElementById('q-dep-amt').value||0);
+  return 0;
+}
+
+function previewQuote(){
+  syncQSections();
+  const cust=document.getElementById('q-cust').value||'Customer';
+  const addr=document.getElementById('q-addr').value||'';
+  const valid=document.getElementById('q-valid').value;
+  const total=getQuoteTotal();
+  const dep=getQuoteDeposit(total);
+  let html=`<div style="border:1.5px solid var(--border);border-radius:var(--r);padding:12px;margin-top:10px;background:var(--cream)">
+    <div style="text-align:center;margin-bottom:8px"><strong style="font-family:'Playfair Display',serif;color:var(--forest)">J. Glover Landscaping & Lawn Maintenance</strong><br><small style="color:var(--muted)">(352) 804-4385 · Free Estimates</small></div>
+    <div style="font-size:.8rem;margin-bottom:8px"><strong>Customer:</strong> ${cust}${addr?'<br><strong>Address:</strong> '+addr:''}</div>`;
+  qSections.forEach(sec=>{
+    const st=sec.items.reduce((s,i)=>s+parseFloat(i.amt||0),0);
+    if(sec.label) html+=`<div style="background:var(--forest);color:var(--gold);padding:3px 8px;border-radius:4px;font-size:.72rem;font-weight:700;margin:6px 0 3px">${sec.label}</div>`;
+    sec.items.forEach(item=>{
+      if(item.desc||item.amt) html+=`<div style="display:flex;justify-content:space-between;font-size:.82rem;padding:2px 0;border-bottom:1px dashed var(--border)"><span>${item.desc||'—'}</span><span>${fmt(item.amt)}</span></div>`;
+    });
+    if(qSections.length>1) html+=`<div style="text-align:right;font-size:.78rem;font-weight:700;color:var(--muted);padding:2px 0">Section Total: ${fmt(st)}</div>`;
+  });
+  html+=`<div style="display:flex;justify-content:space-between;font-weight:700;font-size:.95rem;color:var(--forest);margin-top:6px;padding-top:6px;border-top:2px solid var(--forest)"><span>TOTAL DUE</span><span>${fmt(total)}</span></div>`;
+  if(dep>0) html+=`<div style="font-size:.78rem;color:var(--bark);margin-top:4px">Deposit: ${fmt(dep)} · Balance on completion: ${fmt(total-dep)}</div>`;
+  html+=`<div style="font-size:.72rem;color:var(--muted);margin-top:4px">Quote valid ${valid} days · Thank you for the opportunity!</div></div>`;
+  document.getElementById('q-preview').innerHTML=html;
+}
+
+function saveQuote(){
+  syncQSections();
+  const cust=document.getElementById('q-cust').value.trim();
+  if(!cust){alert('Please enter a customer name.');return;}
+  const total=getQuoteTotal();
+  const dep=getQuoteDeposit(total);
+  const editId=document.getElementById('q-edit-id').value;
+  const qid=editId||uid();
+  const q={
+    id:qid,
+    date:document.getElementById('q-date').value,
+    customer:cust, phone:document.getElementById('q-phone').value,
+    email:document.getElementById('q-email').value, address:document.getElementById('q-addr').value,
+    sections:JSON.parse(JSON.stringify(qSections)),
+    total, deposit:dep, validDays:document.getElementById('q-valid').value,
+    notes:document.getElementById('q-notes').value,
+    photos:qPhotosAttached, sentPDF:qSentPDF, signedCopy:null, status:'sent'
+  };
+  const quotes=yd().quotes;
+  if(editId){ const idx=quotes.findIndex(x=>x.id===editId); if(idx>-1) quotes[idx]=q; else quotes.unshift(q); }
+  else quotes.unshift(q);
+
+  // Auto-create a linked job if one doesn't exist yet
+  if(!editId){
+    const jobs=yd().jobs;
+    const alreadyLinked=jobs.find(j=>j.linkedQuote===qid);
+    if(!alreadyLinked){
+      const newJob={
+        id:uid(), customer:cust,
+        address:document.getElementById('q-addr').value,
+        quoteDate:document.getElementById('q-date').value,
+        signedDate:'', startDate:'', endDate:'',
+        status:'quoted', total, deposit:dep, depositReceived:'no',
+        paid:0, balance:total, payMethod:'Cash',
+        notes:document.getElementById('q-notes').value,
+        linkedQuote:qid
+      };
+      jobs.unshift(newJob);
+      saveJobDB(newJob).catch(e=>showToast('Job save error: '+e.message,'rust'));
+    }
+  }
+
+  saveQuoteDB(q).then(()=>{ showToast('Quote saved!'); }).catch(e=>showToast('Save error: '+e.message,'rust'));
+  closeModal('modal-quote'); renderQuotes(); renderJobs(); refreshDash();
+}
+
+function handleQuotePhotoAttach(e){
+  const files=Array.from(e.target.files);
+  files.forEach(file=>{
+    const r=new FileReader();
+    r.onload=ev=>{
+      qPhotosAttached.push(ev.target.result);
+      renderAttachedPhotos();
+    };
+    r.readAsDataURL(file);
+  });
+}
+
+function handleSentPDFAttach(e){
+  const file=e.target.files[0];
+  if(!file) return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    qSentPDF=ev.target.result;
+    document.getElementById('q-sentpdf-preview').innerHTML=
+      `<span class="badge badge-green">✓ ${file.name}</span>`;
+  };
+  r.readAsDataURL(file);
+}
+
+function renderAttachedPhotos(){
+  const prev=document.getElementById('q-photos-preview');
+  prev.innerHTML=qPhotosAttached.map((src,i)=>`<img src="${src}" class="photo-thumb" onclick="viewPhoto('${src}')">`).join('');
+}
+
+function viewPhoto(src){
+  const w=window.open();
+  w.document.write(`<img src="${src}" style="max-width:100%;max-height:100vh">`);
+}
+
+function renderPDFInPanel(panelId, dataUrl, emptyMsg){
+  const panel=document.getElementById(panelId);
+  if(!dataUrl){
+    // keep existing upload button, just show empty message above it
+    const existing=panel.querySelector('[id^="vq-"]')||panel.firstChild;
+    const msgDiv=panel.querySelector('.pdf-empty-msg');
+    if(!msgDiv){
+      const d=document.createElement('div');
+      d.className='pdf-empty-msg';
+      d.innerHTML=`<div class="alert alert-gold" style="margin-bottom:8px">${emptyMsg}</div>`;
+      panel.insertBefore(d,panel.firstChild);
+    }
+    return;
+  }
+  const contentId=panelId==='vq-sent-panel'?'vq-sent-content':'vq-signed-content';
+  const el=document.getElementById(contentId);
+  if(dataUrl.startsWith('data:application/pdf')||dataUrl.includes('application/pdf')){
+    el.innerHTML=`<iframe src="${dataUrl}" style="width:100%;height:70vh;border:1px solid var(--border);border-radius:8px"></iframe>`;
+  } else if(dataUrl.startsWith('data:image')){
+    el.innerHTML=`<img src="${dataUrl}" style="max-width:100%;border-radius:8px;border:1px solid var(--border)">`;
+  }
+}
+
+function vqShowTab(tab){
+  document.getElementById('vq-sent-panel').style.display=tab==='sent'?'block':'none';
+  document.getElementById('vq-signed-panel').style.display=tab==='signed'?'block':'none';
+  document.getElementById('vq-tab-sent').className=tab==='sent'?'btn btn-primary btn-sm':'btn btn-outline btn-sm';
+  document.getElementById('vq-tab-signed').className=tab==='signed'?'btn btn-primary btn-sm':'btn btn-outline btn-sm';
+}
+
+function viewQuote(id){
+  const q=yd().quotes.find(x=>x.id===id);
+  if(!q) return;
+  document.getElementById('view-quote-id').value=id;
+  document.getElementById('vq-title').textContent=q.customer+' – '+q.date;
+
+  // Sent proposal panel
+  const sentContent=document.getElementById('vq-sent-content');
+  if(q.sentPDF){
+    if(q.sentPDF.includes('application/pdf')||q.sentPDF.startsWith('data:application/pdf')){
+      sentContent.innerHTML=`<div id="pdf-render-sent" style="width:100%"><div class="alert alert-sky">Loading PDF...</div></div>`;
+      renderPDFWithPDFJS(q.sentPDF,'pdf-render-sent');
+    } else {
+      sentContent.innerHTML=`<img src="${q.sentPDF}" style="max-width:100%;border-radius:8px;border:1px solid var(--border)">`;
+    }
+  } else {
+    sentContent.innerHTML=`<div class="alert alert-gold">No sent proposal PDF on file yet. Use the button below to attach the PDF that was emailed to this customer.</div>`;
+  }
+
+  // Signed copy panel
+  const signedContent=document.getElementById('vq-signed-content');
+  if(q.signedCopy){
+    document.getElementById('vq-tab-signed').innerHTML='✍️ Signed Copy <span class="badge badge-green" style="margin-left:4px">On File</span>';
+    if(q.signedCopy.includes('application/pdf')||q.signedCopy.startsWith('data:application/pdf')){
+      signedContent.innerHTML=`<div id="pdf-render-signed" style="width:100%"><div class="alert alert-sky">Loading PDF...</div></div>`;
+      renderPDFWithPDFJS(q.signedCopy,'pdf-render-signed');
+    } else {
+      signedContent.innerHTML=`<img src="${q.signedCopy}" style="max-width:100%;border-radius:8px;border:2px solid var(--leaf)">`;
+    }
+  } else {
+    document.getElementById('vq-tab-signed').innerHTML='✍️ Signed Copy';
+    signedContent.innerHTML=`<div class="alert alert-rust">No signed copy on file yet. Once the customer returns a signed copy, attach it here.</div>`;
+  }
+
+  vqShowTab('sent');
+  openModal('modal-view-quote');
+}
+
+function attachSentPDF(e){
+  const file=e.target.files[0];
+  if(!file) return;
+  const id=document.getElementById('view-quote-id').value;
+  const q=yd().quotes.find(x=>x.id===id);
+  if(!q) return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    q.sentPDF=ev.target.result;
+    saveQuoteDB(q).then(()=>showToast('Sent proposal attached!')).catch(e=>showToast('Save error: '+e.message,'rust'));
+    renderQuotes(); viewQuote(id);
+  };
+  r.readAsDataURL(file);
+}
+
+function attachSignedCopy(e){
+  const file=e.target.files[0];
+  if(!file) return;
+  const id=document.getElementById('view-quote-id').value;
+  const q=yd().quotes.find(x=>x.id===id);
+  if(!q) return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    q.signedCopy=ev.target.result;
+    q.status='signed';
+    const linked=yd().jobs.find(j=>j.linkedQuote===id);
+    if(linked&&linked.status==='quoted'){
+      linked.status='signed';
+      saveJobDB(linked).catch(e=>console.warn(e));
+    }
+    saveQuoteDB(q).then(()=>showToast('Signed copy attached!')).catch(e=>showToast('Save error: '+e.message,'rust'));
+    renderQuotes(); renderJobs(); refreshDash();
+    viewQuote(id); vqShowTab('signed');
+  };
+  r.readAsDataURL(file);
+}
+
+
+function renderQuotes(){
+  const list=document.getElementById('quotes-list');
+  const quotes=yd().quotes;
+  if(!quotes.length){list.innerHTML='<div class="empty"><p>No quotes yet. Use + New or 📷 Scan to add one.</p></div>';return;}
+  list.innerHTML=`<table class="tbl"><thead><tr><th>Date</th><th>Customer</th><th>Total</th><th>Status</th><th></th></tr></thead><tbody>`+
+    quotes.map(q=>`<tr>
+      <td>${q.date||''}</td>
+      <td><strong>${q.customer}</strong><br><small>${q.address||''}</small>
+        ${q.sentPDF?'<br><span class="badge badge-sky">📄 PDF on file</span>':''}
+        ${q.signedCopy?'<br><span class="badge badge-green">✓ Signed</span>':''}
+      </td>
+      <td>${fmt(q.total)}</td>
+      <td>${statusBadge(q.status)}</td>
+      <td style="white-space:nowrap;display:flex;flex-direction:column;gap:4px;padding:6px 4px">
+        <button class="btn btn-sky btn-sm" onclick="viewQuote('${q.id}')">👁 View</button>
+        <button class="btn btn-rust btn-sm" onclick="deleteQuote('${q.id}')">Del</button>
+      </td>
+    </tr>`).join('')+'</tbody></table>';
+}
+
+function deleteQuote(id){
+  if(!confirm('Delete this quote?')) return;
+  yd().quotes=yd().quotes.filter(q=>q.id!==id);
+  deleteQuoteDB(id).catch(e=>showToast('Delete error: '+e.message,'rust'));
+  renderQuotes();
+}
+
+// ══════════════════════════════════════════════════════
+//  AI SCAN
+// ══════════════════════════════════════════════════════
+let scanImageData=null;
+
+function scanDragOver(e){ e.preventDefault(); document.getElementById('scan-drop').classList.add('drag-over'); }
+function scanDrop(e){
+  e.preventDefault();
+  document.getElementById('scan-drop').classList.remove('drag-over');
+  const file=e.dataTransfer.files[0];
+  if(file) loadScanFile(file);
+}
+function handleScanFile(e){ if(e.target.files[0]) loadScanFile(e.target.files[0]); }
+function loadScanFile(file){
+  const r=new FileReader();
+  r.onload=ev=>{
+    scanImageData=ev.target.result;
+    const img=document.getElementById('scan-preview-img');
+    img.src=scanImageData; img.style.display='block';
+    document.getElementById('scan-btn').style.display='flex';
+    document.getElementById('scan-status').innerHTML='';
+  };
+  r.readAsDataURL(file);
+}
+
+async function runAIScan(){
+  if(!scanImageData){alert('Please select an image first.');return;}
+  const btn=document.getElementById('scan-btn');
+  btn.disabled=true; btn.textContent='🤖 Reading...';
+  document.getElementById('scan-status').innerHTML='<div class="scan-status alert alert-sky">Reading handwritten quote with AI... please wait.</div>';
+
+  const base64=scanImageData.split(',')[1];
+  const mediaType=scanImageData.split(';')[0].split(':')[1];
+
+  const prompt=`You are reading a handwritten landscaping quote/proposal form. Extract ALL information you can read and return ONLY a JSON object with these exact fields (use empty string if not readable):
+{
+  "customer": "",
+  "phone": "",
+  "email": "",
+  "address": "",
+  "date": "",
+  "sections": [
+    {
+      "label": "",
+      "items": [
+        {"desc": "", "amt": ""}
+      ]
+    }
+  ],
+  "deposit": "",
+  "notes": "",
+  "startDate": ""
+}
+For sections: each distinct labeled section (A, B, etc) is one section object. Each line item within a section is one item. For amt fields use numbers only (no $ sign). For date fields use YYYY-MM-DD format if possible. Return ONLY valid JSON, no other text.`;
+
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        messages:[{role:'user',content:[
+          {type:'image',source:{type:'base64',media_type:mediaType,data:base64}},
+          {type:'text',text:prompt}
+        ]}]
+      })
+    });
+    const result=await resp.json();
+    const text=result.content.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim();
+    const parsed=JSON.parse(text);
+
+    // Populate quote form
+    closeModal('modal-scan');
+    openNewQuote();
+
+    if(parsed.customer) document.getElementById('q-cust').value=parsed.customer;
+    if(parsed.phone) document.getElementById('q-phone').value=parsed.phone;
+    if(parsed.email) document.getElementById('q-email').value=parsed.email;
+    if(parsed.address) document.getElementById('q-addr').value=parsed.address;
+    if(parsed.date) document.getElementById('q-date').value=parsed.date;
+    if(parsed.notes) document.getElementById('q-notes').value=parsed.notes;
+
+    if(parsed.sections && parsed.sections.length){
+      qSections=parsed.sections.map(s=>({
+        id:uid(),
+        label:s.label||'',
+        items:(s.items||[{desc:'',amt:''}]).map(i=>({desc:i.desc||'',amt:i.amt||''}))
+      }));
+    }
+
+    // Attach the scanned image as a photo
+    qPhotosAttached=[scanImageData];
+    renderAttachedPhotos();
+    renderQSections();
+
+    document.getElementById('scan-status').innerHTML='';
+    btn.disabled=false; btn.textContent='🤖 Read Quote with AI';
+    scanImageData=null;
+    document.getElementById('scan-preview-img').style.display='none';
+    document.getElementById('scan-btn').style.display='none';
+
+  }catch(err){
+    document.getElementById('scan-status').innerHTML=`<div class="scan-status alert alert-rust">Could not read the quote. Please fill in the form manually. (${err.message})</div>`;
+    btn.disabled=false; btn.textContent='🤖 Read Quote with AI';
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  JOBS
+// ══════════════════════════════════════════════════════
+function openNewJob(){
+  document.getElementById('job-modal-title').textContent='New Job';
+  document.getElementById('j-edit-id').value='';
+  ['j-cust','j-addr','j-signed','j-start','j-end','j-notes','j-qlink'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('j-qdate').value=today();
+  document.getElementById('j-total').value='';
+  document.getElementById('j-deposit').value='';
+  document.getElementById('j-paid').value='';
+  document.getElementById('j-balance').value='';
+  document.getElementById('j-status').value='quoted';
+  document.getElementById('j-dep-recvd').value='no';
+  document.getElementById('j-paymethod').value='Cash';
+  document.getElementById('j-invoice-btn').style.display='none';
+  openModal('modal-job');
+}
+
+function calcJobBalance(){
+  const total=parseFloat(document.getElementById('j-total').value||0);
+  const paid=parseFloat(document.getElementById('j-paid').value||0);
+  document.getElementById('j-balance').value=Math.max(0,total-paid).toFixed(2);
+}
+
+function saveJob(){
+  const cust=document.getElementById('j-cust').value.trim();
+  if(!cust){alert('Please enter a customer name.');return;}
+  const editId=document.getElementById('j-edit-id').value;
+  const job={
+    id:editId||uid(),
+    customer:cust, address:document.getElementById('j-addr').value,
+    quoteDate:document.getElementById('j-qdate').value,
+    signedDate:document.getElementById('j-signed').value,
+    startDate:document.getElementById('j-start').value,
+    endDate:document.getElementById('j-end').value,
+    status:document.getElementById('j-status').value,
+    total:parseFloat(document.getElementById('j-total').value||0),
+    deposit:parseFloat(document.getElementById('j-deposit').value||0),
+    depositReceived:document.getElementById('j-dep-recvd').value,
+    paid:parseFloat(document.getElementById('j-paid').value||0),
+    balance:parseFloat(document.getElementById('j-balance').value||0),
+    payMethod:document.getElementById('j-paymethod').value,
+    notes:document.getElementById('j-notes').value,
+    linkedQuote:document.getElementById('j-qlink').value
+  };
+  const jobs=yd().jobs;
+  if(editId){ const idx=jobs.findIndex(j=>j.id===editId); if(idx>-1) jobs[idx]=job; else jobs.unshift(job); }
+  else jobs.unshift(job);
+  saveJobDB(job).then(()=>showToast('Job saved!')).catch(e=>showToast('Save error: '+e.message,'rust'));
+  closeModal('modal-job'); renderJobs(); refreshDash(); renderSchedule();
+}
+
+function editJob(id){
+  const j=yd().jobs.find(x=>x.id===id);
+  if(!j) return;
+  document.getElementById('job-modal-title').textContent='Edit Job';
+  document.getElementById('j-cust').value=j.customer||'';
+  document.getElementById('j-addr').value=j.address||'';
+  document.getElementById('j-qdate').value=j.quoteDate||'';
+  document.getElementById('j-signed').value=j.signedDate||'';
+  document.getElementById('j-start').value=j.startDate||'';
+  document.getElementById('j-end').value=j.endDate||'';
+  document.getElementById('j-status').value=j.status||'quoted';
+  document.getElementById('j-total').value=j.total||'';
+  document.getElementById('j-deposit').value=j.deposit||'';
+  document.getElementById('j-dep-recvd').value=j.depositReceived||'no';
+  document.getElementById('j-paid').value=j.paid||'';
+  document.getElementById('j-balance').value=j.balance||'';
+  document.getElementById('j-paymethod').value=j.payMethod||'Cash';
+  document.getElementById('j-notes').value=j.notes||'';
+  document.getElementById('j-qlink').value=j.linkedQuote||'';
+  document.getElementById('j-edit-id').value=j.id;
+  const showInv=['complete','invoiced','paid'].includes(j.status);
+  document.getElementById('j-invoice-btn').style.display=showInv?'flex':'none';
+  openModal('modal-job');
+}
+
+function deleteJob(id){
+  if(!confirm('Delete this job?')) return;
+  yd().jobs=yd().jobs.filter(j=>j.id!==id);
+  deleteJobDB(id).catch(e=>showToast('Delete error: '+e.message,'rust'));
+  renderJobs(); refreshDash(); renderSchedule();
+}
+
+function renderJobs(){
+  const list=document.getElementById('jobs-list');
+  const jobs=yd().jobs;
+  if(!jobs.length){list.innerHTML='<div class="empty"><p>No jobs yet.</p></div>';return;}
+  list.innerHTML=`<table class="tbl"><thead><tr><th>Customer</th><th>Total</th><th>Dep.</th><th>Paid</th><th>Bal.</th><th>Status</th><th></th></tr></thead><tbody>`+
+    jobs.map(j=>`<tr>
+      <td><strong>${j.customer}</strong><br><small>${j.address||''}</small>${j.startDate?'<br><small>📅 '+j.startDate+'</small>':''}</td>
+      <td>${fmt(j.total)}</td>
+      <td>${j.deposit>0?fmt(j.deposit)+(['signed','scheduled','active','complete','invoiced','paid'].includes(j.status)?'<br><span class="badge '+(j.depositReceived==='yes'?'badge-green':'badge-rust')+'">'+(j.depositReceived==='yes'?'Rcvd':'Pend')+'</span>':''):'—'}</td>
+      <td>${fmt(j.paid)}</td>
+      <td>${j.balance>0?'<strong style="color:var(--rust)">'+fmt(j.balance)+'</strong>':fmt(0)}</td>
+      <td>${statusBadge(j.status)}</td>
+      <td style="white-space:nowrap">
+        ${j.status==='signed'?`<button class="btn btn-sage btn-sm" onclick="openScheduleModal('${j.id}')">📅 Schedule</button><br><br>`:''}
+        <button class="btn btn-sky btn-sm" onclick="editJob('${j.id}')">Edit</button>
+        <button class="btn btn-gold btn-sm" onclick="generateInvoiceById('${j.id}')">Inv</button>
+        <button class="btn btn-rust btn-sm" onclick="deleteJob('${j.id}')">Del</button>
+      </td>
+    </tr>`).join('')+'</tbody></table>';
+}
+
+// ══════════════════════════════════════════════════════
+//  INVOICE
+// ══════════════════════════════════════════════════════
+function generateInvoiceById(id){
+  const j=yd().jobs.find(x=>x.id===id);
+  if(!j){alert('Job not found.');return;}
+  const invNum='INV-'+new Date().getFullYear()+'-'+id.slice(-4).toUpperCase();
+  document.getElementById('invoice-content').innerHTML=`
+    <div style="font-family:'Source Sans 3',sans-serif;padding:6px">
+      <div style="text-align:center;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--forest)">
+        <div style="font-family:'Playfair Display',serif;font-size:1.25rem;color:var(--forest);font-weight:700">J. Glover Landscaping &amp; Lawn Maintenance</div>
+        <div style="font-size:.78rem;color:var(--muted)">(352) 804-4385 · Commercial / Residential</div>
+        <div style="font-size:.72rem;color:var(--muted);margin-top:3px">Invoice #: ${invNum} · Date: ${today()}</div>
+      </div>
+      <div style="margin-bottom:10px;font-size:.86rem">
+        <strong>Bill To:</strong> ${j.customer}<br>
+        ${j.address?'<strong>Property:</strong> '+j.address+'<br>':''}
+        ${j.endDate?'<strong>Completion Date:</strong> '+j.endDate+'<br>':''}
+        ${j.payMethod?'<strong>Payment Method:</strong> '+j.payMethod+'<br>':''}
+      </div>
+      ${j.notes?`<div style="font-size:.82rem;color:var(--muted);margin-bottom:10px;padding:8px;background:var(--cream);border-radius:6px">${j.notes.replace(/\n/g,'<br>')}</div>`:''}
+      <div style="border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px 0;margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;font-size:.86rem;padding:3px 0"><span>Job Total</span><span>${fmt(j.total)}</span></div>
+        ${j.deposit>0&&j.depositReceived==='yes'?`<div style="display:flex;justify-content:space-between;font-size:.86rem;padding:3px 0;color:var(--leaf)"><span>Deposit Received</span><span>– ${fmt(j.deposit)}</span></div>`:''}
+        ${j.paid>j.deposit?`<div style="display:flex;justify-content:space-between;font-size:.86rem;padding:3px 0;color:var(--leaf)"><span>Additional Payment</span><span>– ${fmt(j.paid-j.deposit)}</span></div>`:''}
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:1rem;font-weight:700;color:var(--forest);padding:4px 0">
+        <span>BALANCE DUE</span><span>${fmt(j.balance)}</span>
+      </div>
+      <div style="margin-top:14px;text-align:center;font-size:.74rem;color:var(--muted);padding-top:10px;border-top:1px solid var(--border)">
+        Thank you for your business! · J. Glover Landscaping &amp; Lawn Maintenance · (352) 804-4385
+      </div>
+    </div>`;
+  closeModal('modal-job');
+  openModal('modal-invoice');
+}
+
+// ══════════════════════════════════════════════════════
+//  EXPENSES
+// ══════════════════════════════════════════════════════
+function saveExpense(){
+  const amt=parseFloat(document.getElementById('e-amt').value||0);
+  const desc=document.getElementById('e-desc').value.trim();
+  if(!desc||!amt){alert('Please enter description and amount.');return;}
+  const editId=document.getElementById('e-edit-id').value;
+  const exp={
+    id:editId||uid(),
+    date:document.getElementById('e-date').value,
+    desc, amt, category:document.getElementById('e-cat').value,
+    deductible:document.getElementById('e-deduct').value,
+    notes:document.getElementById('e-notes').value
+  };
+  const expenses=yd().expenses;
+  if(editId){ const idx=expenses.findIndex(e=>e.id===editId); if(idx>-1) expenses[idx]=exp; else expenses.unshift(exp); }
+  else expenses.unshift(exp);
+  saveExpenseDB(exp).then(()=>showToast('Expense saved!')).catch(e=>showToast('Save error: '+e.message,'rust'));
+  closeModal('modal-exp'); renderExpenses(); refreshDash();
+}
+
+function deleteExpense(id){
+  if(!confirm('Delete?')) return;
+  yd().expenses=yd().expenses.filter(e=>e.id!==id);
+  deleteExpenseDB(id).catch(e=>showToast('Delete error: '+e.message,'rust'));
+  renderExpenses(); refreshDash();
+}
+
+function renderExpenses(){
+  const list=document.getElementById('exp-list');
+  const exps=yd().expenses;
+  const total=exps.reduce((s,e)=>s+e.amt,0);
+  const ded=exps.filter(e=>e.deductible==='yes').reduce((s,e)=>s+e.amt,0);
+  document.getElementById('exp-total').textContent=fmt(total);
+  document.getElementById('exp-deduct').textContent=fmt(ded);
+  if(!exps.length){list.innerHTML='<div class="empty"><p>No expenses yet.</p></div>';return;}
+  list.innerHTML=`<table class="tbl"><thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th><th>Ded.</th><th></th></tr></thead><tbody>`+
+    exps.map(e=>`<tr>
+      <td>${e.date||''}</td>
+      <td>${e.desc}${e.notes?'<br><small style="color:var(--muted)">'+e.notes+'</small>':''}</td>
+      <td><span style="font-size:.7rem;background:var(--sand);padding:2px 6px;border-radius:10px">${e.category}</span></td>
+      <td>${fmt(e.amt)}</td>
+      <td><span class="badge ${e.deductible==='yes'?'badge-green':'badge-muted'}">${e.deductible==='yes'?'Yes':'No'}</span></td>
+      <td><button class="btn btn-rust btn-sm" onclick="deleteExpense('${e.id}')">Del</button></td>
+    </tr>`).join('')+'</tbody></table>';
+}
+
+// ══════════════════════════════════════════════════════
+//  SCHEDULE / CALENDAR
+// ══════════════════════════════════════════════════════
+let calDate=new Date();
+
+function calPrev(){ calDate.setMonth(calDate.getMonth()-1); renderSchedule(); }
+function calNext(){ calDate.setMonth(calDate.getMonth()+1); renderSchedule(); }
+
+function renderSchedule(){
+  const year=calDate.getFullYear(), month=calDate.getMonth();
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('cal-title').textContent=months[month]+' '+year;
+
+  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  document.getElementById('cal-names').innerHTML=days.map(d=>`<div class="cal-day-name">${d}</div>`).join('');
+
+  const firstDay=new Date(year,month,1).getDay();
+  const daysInMonth=new Date(year,month+1,0).getDate();
+  const daysInPrev=new Date(year,month,0).getDate();
+  const todayStr=today();
+
+  // Build job map for this month
+  const allJobs=yd().jobs;
+  const jobMap={};
+  allJobs.forEach(j=>{
+    const sd=j.startDate, ed=j.endDate;
+    if(!sd) return;
+    const start=new Date(sd+'T00:00:00');
+    const end=ed?new Date(ed+'T00:00:00'):start;
+    let cur=new Date(start);
+    while(cur<=end){
+      if(cur.getFullYear()===year&&cur.getMonth()===month){
+        const day=cur.getDate();
+        if(!jobMap[day]) jobMap[day]=[];
+        jobMap[day].push(j);
+      }
+      cur.setDate(cur.getDate()+1);
+    }
+  });
+
+  let cells='';
+  for(let i=0;i<firstDay;i++){
+    const d=daysInPrev-firstDay+1+i;
+    cells+=`<div class="cal-cell other-month"><div class="day-num">${d}</div></div>`;
+  }
+  for(let d=1;d<=daysInMonth;d++){
+    const dateStr=year+'-'+(String(month+1).padStart(2,'0'))+'-'+(String(d).padStart(2,'0'));
+    const isToday=dateStr===todayStr;
+    const jobs=jobMap[d]||[];
+    const dotsHTML=jobs.slice(0,2).map(j=>`<span class="cal-job-dot dot-${j.status==='scheduled'?'active':j.status==='signed'?'signed':j.status}">${j.customer.split(' ').pop()}</span>`).join('');
+    const more=jobs.length>2?`<span style="font-size:.52rem;color:var(--muted)">+${jobs.length-2} more</span>`:'';
+    cells+=`<div class="cal-cell${isToday?' today':''}" onclick="calDayClick('${dateStr}')">
+      <div class="day-num">${d}</div>${dotsHTML}${more}
+    </div>`;
+  }
+  const remaining=(7-((firstDay+daysInMonth)%7))%7;
+  for(let i=1;i<=remaining;i++) cells+=`<div class="cal-cell other-month"><div class="day-num">${i}</div></div>`;
+  document.getElementById('cal-grid').innerHTML=cells;
+
+  // Awaiting schedule list -- signed but not yet scheduled
+  const awaiting=allJobs.filter(j=>j.status==='signed');
+  const awaitEl=document.getElementById('awaiting-list');
+  if(!awaiting.length){
+    awaitEl.innerHTML='<div class="empty"><p>No signed jobs waiting to be scheduled.</p></div>';
+  } else {
+    awaitEl.innerHTML=`<div class="alert alert-gold" style="margin-bottom:10px">⚠️ ${awaiting.length} signed job${awaiting.length>1?'s':''} waiting to be added to the schedule.</div>`+
+    `<table class="tbl"><thead><tr><th>Customer</th><th>Signed</th><th>Total</th><th></th></tr></thead><tbody>`+
+    awaiting.map(j=>`<tr>
+      <td><strong>${j.customer}</strong><br><small>${j.address||''}</small></td>
+      <td>${j.signedDate||'—'}</td>
+      <td>${fmt(j.total)}</td>
+      <td><button class="btn btn-sage btn-sm" onclick="openScheduleModal('${j.id}')">📅 Schedule</button></td>
+    </tr>`).join('')+'</tbody></table>';
+  }
+
+  // Confirmed / upcoming scheduled jobs
+  const upcoming=allJobs.filter(j=>j.startDate&&['scheduled','active'].includes(j.status))
+    .sort((a,b)=>a.startDate.localeCompare(b.startDate));
+  const schedList=document.getElementById('sched-list');
+  if(!upcoming.length){
+    schedList.innerHTML='<div class="empty"><p>No upcoming scheduled jobs.</p></div>';
+  } else {
+    schedList.innerHTML=`<table class="tbl"><thead><tr><th>Start Date</th><th>Customer</th><th>Total</th><th>Status</th><th></th></tr></thead><tbody>`+
+      upcoming.map(j=>`<tr>
+        <td>${j.startDate||'—'}</td>
+        <td><strong>${j.customer}</strong><br><small>${j.address||''}</small></td>
+        <td>${fmt(j.total)}</td>
+        <td>${statusBadge(j.status)}</td>
+        <td><button class="btn btn-sky btn-sm" onclick="editJob('${j.id}')">Edit</button></td>
+      </tr>`).join('')+'</tbody></table>';
+  }
+}
+
+function openScheduleModal(jobId){
+  const j=yd().jobs.find(x=>x.id===jobId);
+  if(!j) return;
+  document.getElementById('sched-modal-title').textContent='Schedule – '+j.customer;
+  document.getElementById('sched-cust-name').textContent=j.customer;
+  document.getElementById('sched-cust-addr').textContent=j.address||'';
+  document.getElementById('sched-cust-total').textContent='Job Total: '+fmt(j.total);
+  document.getElementById('sched-cust-notes').textContent=j.notes?j.notes.slice(0,80)+(j.notes.length>80?'…':''):'';
+  document.getElementById('sched-start').value=j.startDate||'';
+  document.getElementById('sched-end').value=j.endDate||'';
+  document.getElementById('sched-notes').value='';
+  document.getElementById('sched-job-id').value=jobId;
+  openModal('modal-schedule-job');
+}
+
+function confirmScheduleJob(){
+  const id=document.getElementById('sched-job-id').value;
+  const start=document.getElementById('sched-start').value;
+  if(!start){alert('Please set a start date.');return;}
+  const j=yd().jobs.find(x=>x.id===id);
+  if(!j) return;
+  j.startDate=start;
+  j.endDate=document.getElementById('sched-end').value||j.endDate;
+  const extraNotes=document.getElementById('sched-notes').value;
+  if(extraNotes) j.notes=(j.notes?j.notes+'\n':'')+extraNotes;
+  j.status='scheduled';
+  saveJobDB(j).then(()=>showToast('Job scheduled!')).catch(e=>showToast('Save error: '+e.message,'rust'));
+  closeModal('modal-schedule-job');
+  renderJobs(); refreshDash(); renderSchedule();
+  // Navigate to schedule page to show result
+  showPage('pg-sched', document.querySelectorAll('.bnav-btn')[3]);
+}
+
+function calDayClick(dateStr){
+  const jobs=yd().jobs.filter(j=>j.startDate===dateStr||j.endDate===dateStr);
+  // Check if any signed jobs exist to offer scheduling
+  const signed=yd().jobs.filter(j=>j.status==='signed');
+  if(!jobs.length){
+    if(signed.length){
+      const names=signed.map((j,i)=>`${i+1}. ${j.customer}`).join('\n');
+      const choice=prompt(`No jobs on ${dateStr}.\n\nSigned jobs awaiting schedule:\n${names}\n\nEnter number to schedule one, or cancel:`);
+      if(choice){
+        const idx=parseInt(choice)-1;
+        if(signed[idx]){
+          openScheduleModal(signed[idx].id);
+          document.getElementById('sched-start').value=dateStr;
+        }
+      }
+    } else {
+      if(confirm('No jobs on '+dateStr+'. Add a new job starting this date?')){ openNewJob(); document.getElementById('j-start').value=dateStr; }
+    }
+    return;
+  }
+  const names=jobs.map(j=>j.customer+' ('+j.status+')').join('\n');
+  if(confirm('Jobs on '+dateStr+':\n'+names+'\n\nEdit first job?')) editJob(jobs[0].id);
+}
+
+// ══════════════════════════════════════════════════════
+//  TAX
+// ══════════════════════════════════════════════════════
+function calcFedTax(income){
+  if(income<=0) return 0;
+  const brackets=[[11925,.10],[48475,.12],[103350,.22],[197300,.24],[250525,.32],[626350,.35],[Infinity,.37]];
+  let tax=0, prev=0;
+  for(const [top,rate] of brackets){
+    if(income<=prev) break;
+    tax+=(Math.min(income,top)-prev)*rate;
+    prev=top; if(income<=top) break;
+  }
+  return tax;
+}
+
+function renderTax(){
+  document.getElementById('tax-year-label').textContent=gy();
+  const jobs=yd().jobs;
+  const exps=yd().expenses;
+  const gross=jobs.filter(j=>j.paid>0).reduce((s,j)=>s+j.paid,0);
+  const ded=exps.filter(e=>e.deductible==='yes').reduce((s,e)=>s+e.amt,0);
+  const net=Math.max(0,gross-ded);
+  const se=net*0.153, seDed=se/2;
+  const taxable=Math.max(0,net-seDed);
+  const fed=calcFedTax(taxable);
+  const total=se+fed;
+  const q=total/4;
+
+  document.getElementById('tx-gross').textContent=fmt(gross);
+  document.getElementById('tx-exp').textContent='– '+fmt(ded);
+  document.getElementById('tx-net').textContent=fmt(net);
+  document.getElementById('tx-se').textContent=fmt(se);
+  document.getElementById('tx-seded').textContent='– '+fmt(seDed);
+  document.getElementById('tx-taxable').textContent=fmt(taxable);
+  document.getElementById('tx-fed').textContent=fmt(fed);
+  document.getElementById('tx-total').textContent=fmt(total);
+
+  const yr=gy();
+  const qs=[{l:'Q1',d:'April 15, '+yr},{l:'Q2',d:'June 16, '+yr},{l:'Q3',d:'Sept 15, '+yr},{l:'Q4',d:'Jan 15, '+(Number(yr)+1)}];
+  document.getElementById('tax-quarters').innerHTML=qs.map(x=>`<div class="quarter-box"><div class="q-label">${x.l}</div><div class="q-date">${x.d}</div><div class="q-amt">${fmt(q)}</div></div>`).join('');
+  document.getElementById('dash-quarters').innerHTML=document.getElementById('tax-quarters').innerHTML;
+}
+
+// ══════════════════════════════════════════════════════
+//  DASHBOARD
+// ══════════════════════════════════════════════════════
+function refreshDash(){
+  const jobs=yd().jobs;
+  const exps=yd().expenses;
+  const gross=jobs.filter(j=>j.paid>0).reduce((s,j)=>s+j.paid,0);
+  const depsHeld=jobs.filter(j=>j.depositReceived==='yes'&&j.status!=='paid').reduce((s,j)=>s+j.deposit,0);
+  const signedStatuses=['signed','scheduled','active','complete','invoiced','paid'];
+  const balDue=jobs.filter(j=>j.balance>0&&signedStatuses.includes(j.status)).reduce((s,j)=>s+j.balance,0);
+  const ded=exps.filter(e=>e.deductible==='yes').reduce((s,e)=>s+e.amt,0);
+  const net=Math.max(0,gross-ded);
+  const se=net*0.153;
+  const totalTax=se+calcFedTax(Math.max(0,net-se/2));
+
+  document.getElementById('ds-revenue').textContent=fmt(gross);
+  document.getElementById('ds-revyear').textContent='YTD '+gy();
+  document.getElementById('ds-deposits').textContent=fmt(depsHeld);
+  document.getElementById('ds-balance').textContent=fmt(balDue);
+  document.getElementById('ds-tax').textContent=fmt(totalTax);
+
+  // Upcoming confirmed jobs
+  const upcoming=jobs.filter(j=>j.startDate&&['scheduled','active'].includes(j.status))
+    .sort((a,b)=>a.startDate.localeCompare(b.startDate)).slice(0,3);
+  const upEl=document.getElementById('dash-upcoming');
+  if(!upcoming.length) upEl.innerHTML='<div class="empty"><p>No confirmed jobs scheduled yet.</p></div>';
+  else upEl.innerHTML=`<table class="tbl"><thead><tr><th>Start</th><th>Customer</th><th>Total</th><th>Status</th></tr></thead><tbody>`+
+    upcoming.map(j=>`<tr><td>${j.startDate}</td><td><strong>${j.customer}</strong><br><small>${j.address||''}</small></td><td>${fmt(j.total)}</td><td>${statusBadge(j.status)}</td></tr>`).join('')+'</tbody></table>';
+
+  const recent=jobs.slice(0,4);
+  const rEl=document.getElementById('dash-recent');
+  if(!recent.length) rEl.innerHTML='<div class="empty"><p>No jobs yet.</p></div>';
+  else rEl.innerHTML=`<table class="tbl"><thead><tr><th>Customer</th><th>Total</th><th>Status</th></tr></thead><tbody>`+
+    recent.map(j=>`<tr><td><strong>${j.customer}</strong></td><td>${fmt(j.total)}</td><td>${statusBadge(j.status)}</td></tr>`).join('')+'</tbody></table>';
+
+  renderTax(); renderQuotes(); renderJobs(); renderExpenses();
+}
+
+// ══════════════════════════════════════════════════════
+//  EXPORT
+// ══════════════════════════════════════════════════════
+function exportTaxCSV(){
+  const jobs=yd().jobs, exps=yd().expenses;
+  let csv='J. Glover Landscaping - Tax Export '+gy()+'\n\n';
+  csv+='JOBS\nCustomer,Address,Status,Total,Deposit,Deposit Received,Paid,Balance,Pay Method,Quote Date,Signed Date,Start Date,End Date\n';
+  jobs.forEach(j=>{ csv+=`"${j.customer}","${j.address||''}","${j.status}",${j.total},${j.deposit},"${j.depositReceived}",${j.paid},${j.balance},"${j.payMethod||''}","${j.quoteDate||''}","${j.signedDate||''}","${j.startDate||''}","${j.endDate||''}"\n`; });
+  csv+='\nEXPENSES\nDate,Description,Category,Amount,Deductible,Notes\n';
+  exps.forEach(e=>{ csv+=`"${e.date}","${e.desc}","${e.category}",${e.amt},"${e.deductible}","${e.notes||''}"\n`; });
+  const gross=jobs.filter(j=>j.paid>0).reduce((s,j)=>s+j.paid,0);
+  const ded=exps.filter(e=>e.deductible==='yes').reduce((s,e)=>s+e.amt,0);
+  const net=Math.max(0,gross-ded), se=net*0.153, fed=calcFedTax(Math.max(0,net-se/2));
+  csv+=`\nTAX SUMMARY\nGross Revenue,${gross}\nDeductible Expenses,${ded}\nNet Profit,${net}\nSE Tax (15.3%),${se.toFixed(2)}\nEst Federal Tax,${fed.toFixed(2)}\nTotal Est Tax,${(se+fed).toFixed(2)}\n`;
+  const blob=new Blob([csv],{type:'text/csv'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='JGlover_Tax_'+gy()+'.csv'; a.click();
+}
+
+
+// ══════════════════════════════════════════════════════
+//  RECEIPT SCAN
+// ══════════════════════════════════════════════════════
+let receiptImageData = null;
+
+function receiptDragOver(e){ e.preventDefault(); document.getElementById('receipt-drop').classList.add('drag-over'); }
+function receiptDrop(e){
+  e.preventDefault();
+  document.getElementById('receipt-drop').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if(file) loadReceiptFile(file);
+}
+function handleReceiptFile(e){ if(e.target.files[0]) loadReceiptFile(e.target.files[0]); }
+function loadReceiptFile(file){
+  const r = new FileReader();
+  r.onload = ev => {
+    receiptImageData = ev.target.result;
+    const img = document.getElementById('receipt-preview-img');
+    img.src = receiptImageData; img.style.display = 'block';
+    document.getElementById('receipt-scan-btn').style.display = 'flex';
+    document.getElementById('receipt-status').innerHTML = '';
+  };
+  r.readAsDataURL(file);
+}
+
+async function runReceiptScan(){
+  if(!receiptImageData){ alert('Please select a receipt image first.'); return; }
+  const btn = document.getElementById('receipt-scan-btn');
+  btn.disabled = true; btn.textContent = '🤖 Reading...';
+  document.getElementById('receipt-status').innerHTML = '<div class="scan-status alert alert-sky">Reading receipt with AI... please wait.</div>';
+
+  const base64 = receiptImageData.split(',')[1];
+  const mediaType = receiptImageData.split(';')[0].split(':')[1];
+
+  const prompt = `You are reading a business receipt for a landscaping company. Extract all information and return ONLY a JSON object with these exact fields:
+{
+  "date": "",
+  "vendor": "",
+  "description": "",
+  "amount": "",
+  "category": "",
+  "deductible": "",
+  "notes": ""
+}
+
+Rules:
+- date: use YYYY-MM-DD format
+- vendor: store or company name
+- description: brief description of what was purchased (e.g. "Fuel - unleaded", "Trimmer line and blades", "Work gloves and safety glasses")
+- amount: total amount as a number only, no $ sign
+- category: choose EXACTLY one of these: "Fuel & Vehicle", "Tools & Equipment Purchase", "Equipment Repair & Maintenance", "Supplies & Materials", "Subcontractors", "Insurance", "Phone (Business Use)", "Marketing & Advertising", "Office & Admin", "Other"
+- deductible: "yes" or "no" -- for a landscaping business, fuel, tools, equipment, repairs, supplies, and business phone are all "yes". Personal items are "no". When in doubt for a business receipt, use "yes".
+- notes: any useful details like receipt number, item count, or anything relevant for tax records
+
+Return ONLY valid JSON, no other text.`;
+
+  try{
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 800,
+        messages: [{ role: 'user', content: [
+          { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64 } },
+          { type: 'text', text: prompt }
+        ]}]
+      })
+    });
+    const result = await resp.json();
+    const text = result.content.map(c => c.text||'').join('').replace(/```json|```/g,'').trim();
+    const parsed = JSON.parse(text);
+
+    // Close scan modal, pre-fill expense modal for review
+    closeModal('modal-receipt-scan');
+
+    // Reset scan state
+    receiptImageData = null;
+    document.getElementById('receipt-preview-img').style.display = 'none';
+    document.getElementById('receipt-scan-btn').style.display = 'none';
+    document.getElementById('receipt-status').innerHTML = '';
+    btn.disabled = false; btn.textContent = '🤖 Read Receipt with AI';
+
+    // Open expense modal pre-filled
+    document.getElementById('e-edit-id').value = '';
+    document.getElementById('e-date').value = parsed.date || today();
+    document.getElementById('e-amt').value = parsed.amount || '';
+    document.getElementById('e-desc').value = parsed.vendor ? (parsed.vendor + (parsed.description ? ' – ' + parsed.description : '')) : (parsed.description || '');
+    document.getElementById('e-notes').value = parsed.notes || '';
+    document.getElementById('e-deduct').value = parsed.deductible === 'no' ? 'no' : 'yes';
+
+    // Match category
+    const cats = ['Fuel & Vehicle','Tools & Equipment Purchase','Equipment Repair & Maintenance','Supplies & Materials','Subcontractors','Insurance','Phone (Business Use)','Marketing & Advertising','Office & Admin','Other'];
+    const matched = cats.find(c => c === parsed.category) || 'Other';
+    document.getElementById('e-cat').value = matched;
+
+    openModal('modal-exp');
+
+    // Show a success note inside the expense modal
+    const existingAlert = document.getElementById('receipt-ai-alert');
+    if(existingAlert) existingAlert.remove();
+    const alert = document.createElement('div');
+    alert.id = 'receipt-ai-alert';
+    alert.className = 'alert alert-green';
+    alert.innerHTML = '✅ Receipt read by AI. Please review all fields before saving.';
+    document.querySelector('#modal-exp .modal-head').after(alert);
+
+  } catch(err) {
+    document.getElementById('receipt-status').innerHTML = `<div class="scan-status alert alert-rust">Could not read the receipt. Please add the expense manually. (${err.message})</div>`;
+    btn.disabled = false; btn.textContent = '🤖 Read Receipt with AI';
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════
+function refreshAll(){ refreshDash(); renderSchedule(); }
+
+async function initApp(){
+  document.getElementById('q-date').value=today();
+  document.getElementById('e-date').value=today();
+  // Show loading state
+  document.getElementById('dash-recent').innerHTML='<div class="empty"><p>Loading...</p></div>';
+  await loadAllData();
+  refreshAll();
+}
+
+// Check if already authenticated (e.g. page refresh in same session)
+if(checkAuth()){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app-wrapper').style.display='block';
+  initApp();
+}
+
+// ══════════════════════════════════════════════════════
+//  PDF.JS RENDERER
+// ══════════════════════════════════════════════════════
+async function renderPDFWithPDFJS(dataUrl, containerId){
+  try{
+    // Set worker
+    if(window.pdfjsLib){
+      pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    } else {
+      document.getElementById(containerId).innerHTML='<div class="alert alert-rust">PDF viewer not available. Try reopening the view.</div>';
+      return;
+    }
+
+    // Convert data URL to Uint8Array
+    const base64=dataUrl.split(',')[1];
+    const binary=atob(base64);
+    const bytes=new Uint8Array(binary.length);
+    for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
+
+    const pdf=await pdfjsLib.getDocument({data:bytes}).promise;
+    const container=document.getElementById(containerId);
+    container.innerHTML='';
+
+    for(let pageNum=1;pageNum<=pdf.numPages;pageNum++){
+      const page=await pdf.getPage(pageNum);
+      const viewport=page.getViewport({scale:1.5});
+      const canvas=document.createElement('canvas');
+      canvas.width=viewport.width;
+      canvas.height=viewport.height;
+      canvas.style.cssText='width:100%;border-radius:8px;border:1px solid var(--border);margin-bottom:8px;display:block';
+      const ctx=canvas.getContext('2d');
+      await page.render({canvasContext:ctx,viewport}).promise;
+      container.appendChild(canvas);
+    }
+  } catch(err){
+    const el=document.getElementById(containerId);
+    if(el) el.innerHTML=`<div class="alert alert-rust">Could not render PDF: ${err.message}. Try attaching it again.</div>`;
+  }
+}
+</script>
+</div><!-- end app-wrapper -->
+</body>
+</html>
